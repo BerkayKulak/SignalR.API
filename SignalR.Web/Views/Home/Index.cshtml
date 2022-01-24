@@ -7,12 +7,12 @@
 
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
 
-    
+
     <script type="text/javascript">
 
         $(document).ready(() => {
             // bağlantıyı kurduk
-            var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44306/MyHub").build();
+            var connection = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.Debug).withUrl("https://localhost:44306/MyHub").build();
 
             // bağlantı durumunu yazdırdık
             $("#conStatus").text(connection.connectionState);
@@ -34,11 +34,9 @@
             // serverda tanımlanmış olan ReceiveName isimli metoda subcrip oldum.on metodu üzerinden
             connection.on("ReceiveName",
                 (name) => {
-                    console.log(name);
+                    $("#namesList").append(`<li class="list-group-item">${name}</li>`)
                 });
         });
-
-        
 
 
     </script>
@@ -53,5 +51,10 @@
         <div class="alert alert-info">
             Bağlantı Durumu: <strong id="conStatus"></strong>
         </div>
+    </div>
+    <div class="col-md-8 offset-2">
+        <ul class="list-group" id="namesList">
+
+        </ul>
     </div>
 </div>
