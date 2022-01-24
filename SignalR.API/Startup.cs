@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SignalR.API.Hubs;
 
 namespace SignalR.API
 {
@@ -26,7 +27,7 @@ namespace SignalR.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddSignalR();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -53,6 +54,9 @@ namespace SignalR.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // http://localhost:5500/MyHub
+                endpoints.MapHub<MyHub>("/MyHub");
             });
         }
     }
