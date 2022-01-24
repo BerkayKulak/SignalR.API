@@ -2,7 +2,56 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section Scripts
+{
+
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+    
+    <script type="text/javascript">
+
+        $(document).ready(() => {
+            // bağlantıyı kurduk
+            var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44306/MyHub").build();
+
+            // bağlantı durumunu yazdırdık
+            $("#conStatus").text(connection.connectionState);
+
+            // bağlantıyı başlattık sonra then metodu ile bağlantının durumunu
+            // arkasından hatayı gördük
+            connection.start().then(() => {
+
+            }).catch((err) => { console.log(err) });
+
+            $("#conStatus").text(connection.connectionState);
+
+            // butona tıkladığımız zaman SendName metodunu çağırdım.
+            $("#btnNameSave").click(() => {
+
+                connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err));
+            });
+
+            // serverda tanımlanmış olan ReceiveName isimli metoda subcrip oldum.on metodu üzerinden
+            connection.on("ReceiveName",
+                (name) => {
+                    console.log(name);
+                });
+        });
+
+        
+
+
+    </script>
+
+}
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <input class="form-control" type="text" id="txtName"/>
+        <hr/>
+        <button class="btn btn-primary" id="btnNameSave">İsim Kaydet</button>
+        <div class="alert alert-info">
+            Bağlantı Durumu: <strong id="conStatus"></strong>
+        </div>
+    </div>
 </div>
