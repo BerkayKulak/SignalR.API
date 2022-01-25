@@ -88,7 +88,7 @@ namespace SignalR.API.Hubs
 
             await _context.SaveChangesAsync();
 
-            await Clients.Group(teamName).SendAsync("ReceiveMessageByGroup",Name,teamName);
+            await Clients.Group(teamName).SendAsync("ReceiveMessageByGroup",Name,team.Id);
 
         }
 
@@ -97,17 +97,14 @@ namespace SignalR.API.Hubs
         {
             var teams = _context.Teams.Include(x => x.Users).Select(x => new
             {
-                teamName = x.Name,
+                teamId = x.Id,
                 Users = x.Users.ToList()
             });
 
             await Clients.All.SendAsync("ReceiveNamesByGroup",teams);
         }
 
-      
-
-
-
+        
 
         public async override Task OnConnectedAsync()
         {
