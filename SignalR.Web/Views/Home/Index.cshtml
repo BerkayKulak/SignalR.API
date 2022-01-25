@@ -15,36 +15,51 @@
             // configureLogging(signalR.LogLevel.Debug).
             var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000,1000,3000,3000]).withUrl("https://localhost:44306/MyHub").build();
 
-            // bağlantı durumunu yazdırdık
-            $("#conStatus").text(connection.connectionState);
+            statusShow();
+            start();
 
-            // bağlantıyı başlattık sonra then metodu ile bağlantının durumunu
-            // arkasından hatayı gördük
-            connection.start().then(() => {
-
+            function statusShow() {
                 $("#conStatus").text(connection.connectionState);
+            }
 
-                $("#loading").hide();
+            function start() {
+                // bağlantıyı başlattık sonra then metodu ile bağlantının durumunu
+                // arkasından hatayı gördük
+                connection.start().then(() => {
 
-            }).catch((err) => { console.log(err) });
+                    statusShow();
 
-            $("#conStatus").text(connection.connectionState);
+                    $("#loading").hide();
+
+                }).catch((err) => {
+                    console.log(err);
+                    setTimeout(()=>start(),2000)
+                });
+            }
+
+
+            // bağlantı durumunu yazdırdık
+            statusShow();
+
+            
+
+            statusShow();
 
 
             connection.onreconnecting(err => {
 
                 $("#loading").show();
                 
-                $("#conStatus").text(connection.connectionState);
+                statusShow();
 
-                console.log("onreconnection " + err);
+              
             });
 
             connection.onreconnected(connectionId => {
 
                 $("#loading").hide();
 
-                $("#conStatus").text(connection.connectionState);
+                statusShow();
 
                 console.log("connectionId: " + connectionId);
 
@@ -54,7 +69,9 @@
 
                 $("#loading").hide();
 
-                $("#conStatus").text(connection.connectionState);
+                statusShow();
+
+                start();
 
             });
 
