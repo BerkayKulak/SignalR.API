@@ -29,6 +29,9 @@ namespace CovidChart.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // bunu herhangi bir classta kullanmak istediðim zaman ctor' da bir baðýmlý olarak eklediðim zaman, nesne örneði alabilcem
+            services.AddScoped<CovidService>();
+
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConStr"]);
