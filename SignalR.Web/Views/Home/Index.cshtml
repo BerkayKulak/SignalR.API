@@ -85,19 +85,25 @@
                     $("#notify").html(`<div class ="alert alert-success">${countText}</div>`);
                 });
 
+            connection.on("Error",
+                (errorText) => {
+                    alert(errorText);
+                });
 
             // Clicks
             // butona tıkladığımız zaman SendName metodunu çağırdım.
             $("#btnNameSave").click(() => {
 
                 connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err));
-            });
+            });  
 
             // serverda tanımlanmış olan ReceiveName isimli metoda subcrip oldum.on metodu üzerinden
             connection.on("ReceiveName",
                 (name) => {
-                    $("#namesList").append(`<li class="list-group-item">${name}</li>`)
+                    $("#namesList").append(`<li class="list-group-item">${name}</li>`);
                 });
+
+           
         });
 
 
