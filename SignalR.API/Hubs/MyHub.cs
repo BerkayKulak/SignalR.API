@@ -1,12 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using SignalR.API.Models;
 
 namespace SignalR.API.Hubs
 {
     public class MyHub:Hub
     {
+        private readonly AppDbContext _context;
+
+        public MyHub(AppDbContext context)
+        {
+            _context = context;
+        }
+
         // static olarak tutarsam benim api uygulamam ayakta kaldığı sürece listenin içine eklenir.
         private static List<string> Names { get; set; } = new List<string>();
 
@@ -42,6 +52,62 @@ namespace SignalR.API.Hubs
         {
             await Clients.All.SendAsync("ReceiveNames",Names);
         }
+
+        // Groups
+        // Gruba ekleme
+        public async Task AddToGroup(string teamName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, teamName);
+        }
+
+        // Gruptan silme
+        public async Task RemoveToGroup(string teamName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, teamName);
+        }
+
+        // Gruba isim gönderme
+        public async Task SendNameByGroup(string Name, string teamName)
+        {
+            var team = _context.Teams.FirstOrDefault(x => x.Name == teamName);
+
+
+            if (team != null)
+            {
+                team.Users.Add(new User(){Name = Name});
+
+            }
+            else
+            {
+                var newTeam = new Team() {Name = teamName};
+
+                newTeam.Users.Add(new User(){Name = Name});
+
+                _context.Teams.Add(newTeam);
+            }
+
+            await _context.SaveChangesAsync();
+
+            await Clients.Group(teamName).SendAsync("ReceiveMessageByGroup",Name,teamName);
+
+        }
+
+        // Gruptaki tüm isimleri alma
+        public async Task GetNamesByGroup()
+        {
+            var teams = _context.Teams.Include(x => x.Users).Select(x => new
+            {
+                teamName = x.Name,
+                Users = x.Users.ToList()
+            });
+
+            await Clients.All.SendAsync("ReceiveNamesByGroup",teams);
+        }
+
+      
+
+
+
 
         public async override Task OnConnectedAsync()
         {
