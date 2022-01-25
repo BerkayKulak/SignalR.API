@@ -31,6 +31,9 @@
 
                     $("#loading").hide();
 
+                    connection.invoke("GetNames");
+
+
                 }).catch((err) => {
                     console.log(err);
                     setTimeout(() => start(), 2000)
@@ -90,12 +93,21 @@
                     alert(errorText);
                 });
 
+            connection.on("ReceiveNames",
+                (names) => {
+                    $("#namesList").empty();
+                    names.forEach((item, index) => {
+                        $("#namesList").append(`<li class="list-group-item">${item}</li>`);
+                    })
+                });
+
+
             // Clicks
             // butona tıkladığımız zaman SendName metodunu çağırdım.
             $("#btnNameSave").click(() => {
 
                 connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err));
-            });  
+            });
 
             // serverda tanımlanmış olan ReceiveName isimli metoda subcrip oldum.on metodu üzerinden
             connection.on("ReceiveName",
@@ -103,7 +115,7 @@
                     $("#namesList").append(`<li class="list-group-item">${name}</li>`);
                 });
 
-           
+
         });
 
 
