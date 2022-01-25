@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CovidChart.API.Hubs;
 using CovidChart.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,7 @@ namespace CovidChart.API
             {
                 options.UseSqlServer(Configuration["ConStr"]);
             });
+            services.AddSignalR();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -58,6 +60,7 @@ namespace CovidChart.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<CovidHub>("/CovidHub");
             });
         }
     }
