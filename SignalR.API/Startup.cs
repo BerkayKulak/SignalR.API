@@ -11,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SignalR.API.Hubs;
+using SignalR.API.Models;
 
 namespace SignalR.API
 {
@@ -27,18 +29,21 @@ namespace SignalR.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(options => { options.UseSqlServer(Configuration["ConStr"]); });
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder =>
-                {
-                    builder.WithOrigins("https://localhost:44355").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                });
+                options.AddPolicy("CorsPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("https://localhost:44355").AllowAnyHeader().AllowAnyMethod()
+                            .AllowCredentials();
+                    });
             });
             services.AddSignalR();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SignalR.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "SignalR.API", Version = "v1"});
             });
         }
 
