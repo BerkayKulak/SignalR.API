@@ -13,7 +13,7 @@
         $(document).ready(() => {
             // bağlantıyı kurduk
             // configureLogging(signalR.LogLevel.Debug).
-            var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000,1000,3000,3000]).withUrl("https://localhost:44306/MyHub").build();
+            var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000, 1000, 3000, 3000]).withUrl("https://localhost:44306/MyHub").build();
 
             statusShow();
             start();
@@ -33,7 +33,7 @@
 
                 }).catch((err) => {
                     console.log(err);
-                    setTimeout(()=>start(),2000)
+                    setTimeout(() => start(), 2000)
                 });
             }
 
@@ -41,7 +41,6 @@
             // bağlantı durumunu yazdırdık
             statusShow();
 
-            
 
             statusShow();
 
@@ -49,10 +48,10 @@
             connection.onreconnecting(err => {
 
                 $("#loading").show();
-                
+
                 statusShow();
 
-              
+
             });
 
             connection.onreconnected(connectionId => {
@@ -79,6 +78,11 @@
             connection.on("ReceiveClientCount",
                 (clientCount) => {
                     $("#clientCount").text(clientCount);
+                });
+
+            connection.on("Notify",
+                (countText) => {
+                    $("#notify").html(`<div class ="alert alert-success">${countText}</div>`);
                 });
 
 
@@ -116,8 +120,9 @@
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
-         <div class="clearfix"></div>
+            <div class="clearfix"></div>
         </div>
+        <div id="notify"></div>
     </div>
     <div class="col-md-8 offset-2">
         <ul class="list-group" id="namesList">
