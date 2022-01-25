@@ -22,8 +22,13 @@ namespace SignalR.API.Hubs
 
         private static int ClientCount { get; set; } = 0;
 
-
         public static int TeamCount { get; set; } = 7;
+
+        public async Task SendProduct(Product p)
+        {
+            await Clients.All.SendAsync("ReceiveProduct", p);
+
+        }
 
         // clientlar sendmessage'a istek yapacaklar ve  message isminde bir parametre gönderecekler 
         // daha sonra bu metod çalıştığı zaman clientlar üzerindeki receivemessage' a bildiri göndereceğim.
