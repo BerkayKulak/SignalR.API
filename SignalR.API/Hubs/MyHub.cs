@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,7 +8,9 @@ namespace SignalR.API.Hubs
     public class MyHub:Hub
     {
         // static olarak tutarsam benim api uygulamam ayakta kaldığı sürece listenin içine eklenir.
-        public static List<string> Names { get; set; } = new List<string>();
+        private static List<string> Names { get; set; } = new List<string>();
+
+        private static int ClientCount { get; set; } = 0;
 
         // clientlar sendmessage'a istek yapacaklar ve  message isminde bir parametre gönderecekler 
         // daha sonra bu metod çalıştığı zaman clientlar üzerindeki receivemessage' a bildiri göndereceğim.
@@ -29,6 +32,22 @@ namespace SignalR.API.Hubs
             await Clients.All.SendAsync("ReceiveNames",Names);
         }
 
+        public async override Task OnConnectedAsync()
+        {
+            ClientCount++;
 
+            await Clients.All.SendAsync("ReceiveClientCount", ClientCount);
+
+            await base.OnConnectedAsync();
+        }
+
+        public async override Task OnDisconnectedAsync(Exception? exception)
+        {
+            ClientCount--;
+
+            await Clients.All.SendAsync("ReceiveClientCount", ClientCount);
+
+            await base.OnDisconnectedAsync(exception);
+        }
     }
 }
