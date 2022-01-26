@@ -31,13 +31,22 @@ namespace CovidChart.API
         {
             // bunu herhangi bir classta kullanmak istediðim zaman ctor' da bir baðýmlý olarak eklediðim zaman, nesne örneði alabilcem
             services.AddScoped<CovidService>();
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("https://localhost:44355").AllowAnyHeader().AllowAnyMethod()
+                            .AllowCredentials();
+                    });
+            });
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration["ConStr"]);
             });
             services.AddSignalR();
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CovidChart.API", Version = "v1" });
@@ -57,6 +66,8 @@ namespace CovidChart.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
