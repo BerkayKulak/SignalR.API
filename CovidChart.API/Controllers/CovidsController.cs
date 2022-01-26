@@ -35,7 +35,7 @@ namespace CovidChart.API.Controllers
         {
             Random rnd = new Random();
 
-            Enumerable.Range(1,10).ToList().ForEach(x =>
+            Enumerable.Range(1,50).ToList().ForEach(x =>
             {
                 foreach (Ecity item in  Enum.GetValues(typeof(Ecity)))
                 {
@@ -48,7 +48,7 @@ namespace CovidChart.API.Controllers
 
                     _service.SaveCovid(newcovid).Wait();
 
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(200);
 
                 }
 
